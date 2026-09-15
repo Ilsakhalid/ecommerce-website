@@ -1,0 +1,105 @@
+﻿@model EcommerceStore.Models.GRNHeader
+
+@{
+    ViewData["Title"] = "Goods Received Note (Stock In)";
+}
+
+<div class="container py-4">
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-header py-3 text-white" style="background-color: #2d3e1e;">
+            <h4 class="mb-0 fw-bold fs-5"><i class="bi bi-box-arrow-in-down me-2"></i>Goods Received Note (GRN - Stock In)</h4>
+        </div>
+        <div class="card-body p-4 bg-white">
+            <form asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold text-dark">Supplier Name</label>
+                        <input asp-for="SupplierName" class="form-control" placeholder="e.g. Acme Tech Distributors" required />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold text-dark">Invoice / Ref Number</label>
+                        <input name="InvoiceNumber" id="InvoiceNumber" class="form-control" placeholder="e.g. INV-2026-001" />
+                    </div>
+                </div>
+
+                <hr class="my-4" />
+                <h5 class="fw-bold mb-3" style="color: #2d3e1e;">Received Inventory Line Items</h5>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle" id="itemsTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 40%;">Product</th>
+                                <th style="width: 20%;">Quantity Received</th>
+                                <th style="width: 25%;">Cost Price per Unit ($)</th>
+                                <th style="width: 15%;" class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="itemList">
+                            <tr>
+                                <td>
+                                    <select name="details[0].ProductID" class="form-select" asp-items="ViewBag.Products" required>
+                                        <option value="">-- Select Product --</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <input type="number" name="details[0].QuantityReceived" class="form-control" min="1" value="1" required />
+                                </td>
+                                <td>
+                                    <input type="number" step="0.01" name="details[0].UnitPurchasePrice" class="form-control" placeholder="0.00" required />
+                                </td>
+                                <td class="text-center">
+                                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeRow(this)">Remove</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mb-4">
+                    <button type="button" class="btn btn-sm px-3 text-white fw-medium" style="background-color: #c08552;" onclick="addRow()">+ Add Line Item</button>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 border-top pt-3">
+                    <a asp-controller="Account" asp-action="AdminDashboard" class="btn btn-light px-4 border">Cancel</a>
+                    <button type="submit" class="btn text-white px-4 fw-bold" style="background-color: #2d3e1e;">Save GRN Entry</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let itemIndex = 1;
+
+        function addRow() {
+            const tableBody = document.getElementById("itemList");
+            const firstRow = tableBody.rows[0];
+            const newRow = firstRow.cloneNode(true);
+
+            newRow.querySelectorAll("select, input").forEach(input => {
+                const name = input.getAttribute("name");
+                if (name) {
+                    input.setAttribute("name", name.replace(/\[\d+\]/, `[${itemIndex}]`));
+                        }
+                if (input.tagName === "INPUT" && input.type !== "number") {
+                    input.value = "";
+                        }
+                    });
+
+                    tableBody.appendChild(newRow);
+            itemIndex++;
+                }
+
+                function removeRow(btn) {
+            const tableBody = document.getElementById("itemList");
+            if (tableBody.rows.length > 1) {
+                btn.closest("tr").remove();
+            } else {
+                alert("At least one product line item is required in a GRN.");
+            }
+                }
+    </script>
+}

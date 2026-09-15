@@ -1,0 +1,105 @@
+﻿@model IEnumerable<EcommerceStore.Models.SalesOrder>
+
+@{
+    ViewData["Title"] = "Executive Commerce Dashboard";
+}
+
+<div class="container py-4">
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+        <div>
+            <h2 class="fw-bold mb-1" style="color: #2d3e1e;">
+                <i class="bi bi-speedometer2 me-2" style="color: #2d3e1e;"></i>Executive Commerce Dashboard
+            </h2>
+            <p class="text-muted small mb-0">Overview of total revenue, incoming sales orders, and customer accounts.</p>
+        </div>
+        <a asp-controller="Products" asp-action="Create" class="btn text-white shadow-sm px-4 fw-medium" style="background-color: #c08552; border: none;">+ Add New Product</a>
+    </div>
+
+    <!-- Analytics Cards -->
+    <div class="row g-4 mb-4">
+        <!-- Gross Revenue -->
+        <div class="col-md-4">
+            <div class="card border-0 rounded-4 p-4 shadow-sm h-100" style="background-color: #ffffff; border-left: 5px solid #2d3e1e !important;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="text-uppercase fw-bold small text-muted d-block">Gross Revenue</span>
+                        <h2 class="fw-bold mb-0 mt-1" style="color: #2d3e1e;">$@ViewBag.TotalSales.ToString("F2")</h2>
+                    </div>
+                    <div class="rounded-circle p-3 d-flex align-items-center justify-content-center" style="background-color: #f4efe6;">
+                        <i class="bi bi-currency-dollar fs-3" style="color: #2d3e1e;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Sales Orders -->
+        <div class="col-md-4">
+            <div class="card border-0 rounded-4 p-4 shadow-sm h-100" style="background-color: #ffffff; border-left: 5px solid #2d3e1e !important;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="text-uppercase fw-bold small text-muted d-block">Total Sales Orders</span>
+                        <h2 class="fw-bold mb-0 mt-1" style="color: #2d3e1e;">@ViewBag.TotalOrders</h2>
+                    </div>
+                    <div class="rounded-circle p-3 d-flex align-items-center justify-content-center" style="background-color: #f4efe6;">
+                        <i class="bi bi-bag-check fs-3" style="color: #2d3e1e;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Registered Accounts -->
+        <div class="col-md-4">
+            <div class="card border-0 rounded-4 p-4 shadow-sm h-100" style="background-color: #ffffff; border-left: 5px solid #2d3e1e !important;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="text-uppercase fw-bold small text-muted d-block">Registered Accounts</span>
+                        <h2 class="fw-bold mb-0 mt-1" style="color: #2d3e1e;">@ViewBag.UsersCount</h2>
+                    </div>
+                    <div class="rounded-circle p-3 d-flex align-items-center justify-content-center" style="background-color: #f4efe6;">
+                        <i class="bi bi-people fs-3" style="color: #2d3e1e;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transactions Table -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-header bg-white py-3 border-0">
+            <h5 class="fw-bold mb-0" style="color: #2d3e1e;">Recent Sales Transactions</h5>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Order ID</th>
+                        <th>Customer</th>
+                        <th>Date & Time</th>
+                        <th class="pe-4 text-end">Total Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var order in Model)
+                        {
+                            <tr>
+                                <td class="ps-4 fw-bold">#@order.OrderID</td>
+                                <td>@(order.Customer != null ? order.Customer.FullName : "Customer #" + order.CustomerID)</td>
+                                <td>@order.OrderDate.ToString("MMM dd, yyyy - hh:mm tt")</td>
+                                <td class="pe-4 text-end fw-bold" style="color: #2d3e1e;">$@order.TotalAmount.ToString("F2")</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center text-muted py-4">No sales records logged in system.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

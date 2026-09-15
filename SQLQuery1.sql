@@ -1,0 +1,1 @@
+﻿ALTER TABLE Products ADD StockQuantity INT NOT NULL DEFAULT 0;

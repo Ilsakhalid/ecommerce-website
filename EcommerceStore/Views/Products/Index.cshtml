@@ -1,0 +1,55 @@
+@model IEnumerable<EcommerceStore.Models.Product>
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewData["Title"] = "Products Catalog";
+    bool isAdmin = HttpContextAccessor.HttpContext?.Session.GetString("UserRole") == "Admin";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Products Catalog</h2>
+        @if (isAdmin)
+        {
+            <a asp-action="Create" class="btn btn-primary">+ Add New Product (Admin)</a>
+        }
+    </div>
+
+    <table class="table table-striped table-hover align-middle shadow-sm">
+        <thead class="table-dark">
+            <tr>
+                <th>Product Name</th>
+                <th>Pack Size</th>
+                <th>Unit Price ($)</th>
+                <th>Category</th>
+                <th class="text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.PackSize</td>
+                    <td>@item.UnitPrice.ToString("F2")</td>
+                    <td>@(item.Category != null ? item.Category.CategoryName : "N/A")</td>
+                    <td class="text-center">
+                        <!-- Details available to everyone (Customers + Admins) -->
+                        <a asp-action="Details" asp-route-id="@item.ProductID" class="btn btn-sm btn-info text-white">Details</a>
+
+                        <!-- Order action for customers -->
+                        <a asp-controller="SalesOrder" asp-action="Create" class="btn btn-sm btn-success">+ Add to Order</a>
+
+                        <!-- Global edit/delete restricted to Admin -->
+                        @if (isAdmin)
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.ProductID" class="btn btn-sm btn-warning ms-1">Edit Product</a>
+                            <a asp-action="Delete" asp-route-id="@item.ProductID" class="btn btn-sm btn-danger ms-1">Delete Product</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
